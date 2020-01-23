@@ -30,6 +30,10 @@ July 4th, 2013
 
 Command port changed from 30002 to 30010 to accomodate changes in ircDDBGateway port usage
 
+Version 3.09, modded by Russell Thomas, KV4S
+January 23rd, 2020
+	Attempt to unlock all letter modules.
+
 */
 
 
@@ -67,7 +71,7 @@ using namespace std;
 
 #include </opt/dxrfd/passwd.h>  /* Set command line password in passwd.h */
 
-#define VERSION "3.08a-w1bsb"
+#define VERSION "3.09-kv4s"
 #define OWNER_SIZE 8
 #define IP_SIZE 15
 #define MAXHOSTNAMELEN 64
@@ -141,7 +145,7 @@ struct inbound
    char mod;  /* A B C D E*/
 
    bool is_ref; 
-   char links[5]; 
+   char links[26]; 
    /* 
       The index is the local module: 0=A, 1=B, 2=C, 3=D, 4=E
       The value is the remote module
@@ -166,7 +170,7 @@ static struct
 {
    uint32_t s_addr;
    unsigned char hdr[58];
-} temp_r[5];
+} temp_r[26];
 
 /* inbound repeaters on port 30001 */
 struct a_user
@@ -203,10 +207,10 @@ struct a_user
           This means that the remote repeater 
                has linked both repeater bands C and D to our reflector module B
    */
-   char rpt_mods[5][4];
+   char rpt_mods[26][4];
 
    /* time link was established */
-   time_t link_time[5][4];
+   time_t link_time[26][4];
 
    /* IP address and UDP port of connected station */
    /* For easy access to the connected station */
@@ -234,7 +238,7 @@ static struct
    uint32_t s_addr;
    unsigned char hdr[56];
    unsigned char old_sid[2];
-} temp_x[5];
+} temp_x[26];
 
 /* the map of which reflectors we can link to */
 typedef map<string,string> call_ip_type;
@@ -395,7 +399,7 @@ static int link_to_xrf(char local_mod, char *ref, char remote_mod, char *IP)
 
    printf("Sending request [%s] to reflector %s\n", request, ref);
 
-   for (counter = 0; counter < 5; counter++)
+   for (counter = 0; counter < 26; counter++)
       sendto(srv_sock, request, CALL_SIZE + 3,
              0,(struct sockaddr *)&sin,
              sizeof(struct sockaddr_in));
@@ -423,12 +427,14 @@ static int link_to_ref(char *call)
 
    local_mod = call[0];
 
+	/*
    if ((local_mod != 'A') && (local_mod != 'B') && 
        (local_mod != 'C') && (local_mod != 'D')) 
    {
       printf("Invalid local module %c for linking\n", local_mod);
       return -1;
    }
+   */
 
    memset(ref, ' ', sizeof(ref));
    memcpy(ref, call + 1, 6);
@@ -451,12 +457,14 @@ static int link_to_ref(char *call)
    }
 
    remote_mod = call[7];
+   /*
    if ((remote_mod != 'A') && (remote_mod != 'B') && (remote_mod != 'C') && 
        (remote_mod != 'D') && (remote_mod != 'X'))
    {
       printf("Invalid remote module %c\n", remote_mod);
       return -1;
    }
+   */
 
    payload[0] = '\0';
    /* get the IP address from database */
@@ -502,7 +510,28 @@ static int link_to_ref(char *call)
           (inbound_ptr->links[1] == remote_mod) ||
           (inbound_ptr->links[2] == remote_mod) ||
           (inbound_ptr->links[3] == remote_mod) ||
-          (inbound_ptr->links[4] == remote_mod))
+          (inbound_ptr->links[4] == remote_mod) ||
+		  (inbound_ptr->links[5] == remote_mod) ||
+		  (inbound_ptr->links[6] == remote_mod) ||
+		  (inbound_ptr->links[7] == remote_mod) ||
+		  (inbound_ptr->links[8] == remote_mod) ||
+		  (inbound_ptr->links[9] == remote_mod) ||
+		  (inbound_ptr->links[10] == remote_mod) ||
+		  (inbound_ptr->links[11] == remote_mod) ||
+		  (inbound_ptr->links[12] == remote_mod) ||
+		  (inbound_ptr->links[13] == remote_mod) ||
+		  (inbound_ptr->links[14] == remote_mod) ||
+		  (inbound_ptr->links[15] == remote_mod) ||
+		  (inbound_ptr->links[16] == remote_mod) ||
+		  (inbound_ptr->links[17] == remote_mod) ||
+		  (inbound_ptr->links[18] == remote_mod) ||
+		  (inbound_ptr->links[19] == remote_mod) ||
+		  (inbound_ptr->links[20] == remote_mod) ||
+		  (inbound_ptr->links[21] == remote_mod) ||
+		  (inbound_ptr->links[22] == remote_mod) ||
+		  (inbound_ptr->links[23] == remote_mod) ||
+		  (inbound_ptr->links[24] == remote_mod) ||
+		  (inbound_ptr->links[25] == remote_mod))
       {
          printf ("Already set or duplicate assignment\n");
          return 0;
@@ -519,14 +548,98 @@ static int link_to_ref(char *call)
       else
       if (local_mod == 'D')
          inbound_ptr->links[3] = remote_mod;
-      else
+	 else
+      if (local_mod == 'E')
          inbound_ptr->links[4] = remote_mod;
+	 else
+      if (local_mod == 'F')
+         inbound_ptr->links[5] = remote_mod;
+	 else
+      if (local_mod == 'G')
+         inbound_ptr->links[6] = remote_mod;
+	 else
+      if (local_mod == 'H')
+         inbound_ptr->links[7] = remote_mod;
+	 else
+      if (local_mod == 'I')
+         inbound_ptr->links[8] = remote_mod;
+	 else
+      if (local_mod == 'J')
+         inbound_ptr->links[9] = remote_mod;
+	 else
+      if (local_mod == 'K')
+         inbound_ptr->links[10] = remote_mod;
+	 else
+      if (local_mod == 'L')
+         inbound_ptr->links[11] = remote_mod;
+	 else
+      if (local_mod == 'M')
+         inbound_ptr->links[12] = remote_mod;
+	 else
+      if (local_mod == 'N')
+         inbound_ptr->links[13] = remote_mod;
+	 else
+      if (local_mod == 'O')
+         inbound_ptr->links[14] = remote_mod;
+	 else
+      if (local_mod == 'P')
+         inbound_ptr->links[15] = remote_mod;
+	 else
+      if (local_mod == 'Q')
+         inbound_ptr->links[16] = remote_mod;
+	 else
+      if (local_mod == 'R')
+         inbound_ptr->links[17] = remote_mod;
+	 else
+      if (local_mod == 'S')
+         inbound_ptr->links[18] = remote_mod;
+	 else
+      if (local_mod == 'T')
+         inbound_ptr->links[19] = remote_mod;
+	 else
+      if (local_mod == 'U')
+         inbound_ptr->links[20] = remote_mod;
+	 else
+      if (local_mod == 'V')
+         inbound_ptr->links[21] = remote_mod;
+	 else
+      if (local_mod == 'W')
+         inbound_ptr->links[22] = remote_mod;
+	 else
+      if (local_mod == 'X')
+         inbound_ptr->links[23] = remote_mod;
+	 else
+      if (local_mod == 'Y')
+         inbound_ptr->links[24] = remote_mod;
+      else
+         inbound_ptr->links[25] = remote_mod;
 
       if ((inbound_ptr->links[0] == ' ') && 
           (inbound_ptr->links[1] == ' ') &&
           (inbound_ptr->links[2] == ' ') &&
           (inbound_ptr->links[3] == ' ') &&
-          (inbound_ptr->links[4] == ' '))
+		  (inbound_ptr->links[4] == ' ') &&
+		  (inbound_ptr->links[5] == ' ') &&
+		  (inbound_ptr->links[6] == ' ') &&
+		  (inbound_ptr->links[7] == ' ') &&
+		  (inbound_ptr->links[8] == ' ') &&
+		  (inbound_ptr->links[9] == ' ') &&
+		  (inbound_ptr->links[10] == ' ') &&
+		  (inbound_ptr->links[11] == ' ') &&
+		  (inbound_ptr->links[12] == ' ') &&
+		  (inbound_ptr->links[13] == ' ') &&
+		  (inbound_ptr->links[14] == ' ') &&
+		  (inbound_ptr->links[15] == ' ') &&
+		  (inbound_ptr->links[16] == ' ') &&
+		  (inbound_ptr->links[17] == ' ') &&
+		  (inbound_ptr->links[18] == ' ') &&
+		  (inbound_ptr->links[19] == ' ') &&
+		  (inbound_ptr->links[20] == ' ') &&
+		  (inbound_ptr->links[21] == ' ') &&
+		  (inbound_ptr->links[22] == ' ') &&
+		  (inbound_ptr->links[23] == ' ') &&
+		  (inbound_ptr->links[24] == ' ') &&
+          (inbound_ptr->links[25] == ' '))
           
       {
          /* all links removed, disconnect from remote system */
@@ -549,11 +662,13 @@ static int link_to_ref(char *call)
       return 0;
    }
 
+   /*
    if (remote_mod == 'X')
    {
       printf("X can not be used, there is no connection to unlink\n");
       return -1;
    }
+   */
 
    if ((inbound_list.size() + 1) > MAX_OTHER_USERS)
    {
@@ -588,8 +703,71 @@ static int link_to_ref(char *call)
       else
       if (local_mod == 'D')
          inbound_ptr->links[3] = remote_mod;
-      else
+	 else
+      if (local_mod == 'E')
          inbound_ptr->links[4] = remote_mod;
+	 else
+      if (local_mod == 'F')
+         inbound_ptr->links[5] = remote_mod;
+	 else
+      if (local_mod == 'G')
+         inbound_ptr->links[6] = remote_mod;
+	 else
+      if (local_mod == 'H')
+         inbound_ptr->links[7] = remote_mod;
+	 else
+      if (local_mod == 'I')
+         inbound_ptr->links[8] = remote_mod;
+	 else
+      if (local_mod == 'J')
+         inbound_ptr->links[9] = remote_mod;
+	 else
+      if (local_mod == 'K')
+         inbound_ptr->links[10] = remote_mod;
+	 else
+      if (local_mod == 'L')
+         inbound_ptr->links[11] = remote_mod;
+	 else
+      if (local_mod == 'M')
+         inbound_ptr->links[12] = remote_mod;
+	 else
+      if (local_mod == 'N')
+         inbound_ptr->links[13] = remote_mod;
+	 else
+      if (local_mod == 'O')
+         inbound_ptr->links[14] = remote_mod;
+	 else
+      if (local_mod == 'P')
+         inbound_ptr->links[15] = remote_mod;
+	 else
+      if (local_mod == 'Q')
+         inbound_ptr->links[16] = remote_mod;
+	 else
+      if (local_mod == 'R')
+         inbound_ptr->links[17] = remote_mod;
+	 else
+      if (local_mod == 'S')
+         inbound_ptr->links[18] = remote_mod;
+	 else
+      if (local_mod == 'T')
+         inbound_ptr->links[19] = remote_mod;
+	 else
+      if (local_mod == 'U')
+         inbound_ptr->links[20] = remote_mod;
+	 else
+      if (local_mod == 'V')
+         inbound_ptr->links[21] = remote_mod;
+	 else
+      if (local_mod == 'W')
+         inbound_ptr->links[22] = remote_mod;
+	 else
+      if (local_mod == 'X')
+         inbound_ptr->links[23] = remote_mod;
+	 else
+      if (local_mod == 'Y')
+         inbound_ptr->links[24] = remote_mod;
+      else
+         inbound_ptr->links[25] = remote_mod;
 
       strcpy(inbound_ptr->serial, "REF     ");
 
@@ -1223,9 +1401,9 @@ static void print_links_screen()
    for (pos = a_user_list.begin(); pos != a_user_list.end(); pos++)
    {
       a_user_ptr = (struct a_user *)pos->second;
-      for (i = 0; i < 5; i++)
+      for (i = 0; i < 26; i++)
       {
-         for (j = 0; j < 4; j++)
+         for (j = 0; j < 25; j++)
          {
             if (a_user_ptr->rpt_mods[i][j] != '\0')
             {
@@ -1243,6 +1421,69 @@ static void print_links_screen()
                else
                if (i == 4)
                   from_mod = 'E';
+			  else
+               if (i == 5)
+                  from_mod = 'F';
+			  else
+               if (i == 6)
+                  from_mod = 'G';
+			  else
+               if (i == 7)
+                  from_mod = 'H';
+			  else
+               if (i == 8)
+                  from_mod = 'I';
+			  else
+               if (i == 9)
+                  from_mod = 'J';
+			  else
+               if (i == 10)
+                  from_mod = 'K';
+			  else
+               if (i == 11)
+                  from_mod = 'L';
+			  else
+               if (i == 12)
+                  from_mod = 'M';
+			  else
+               if (i == 13)
+                  from_mod = 'N';
+			  else
+               if (i == 14)
+                  from_mod = 'O';
+			  else
+               if (i == 15)
+                  from_mod = 'P';
+			  else
+               if (i == 16)
+                  from_mod = 'Q';
+			  else
+               if (i == 17)
+                  from_mod = 'R';
+			  else
+               if (i == 18)
+                  from_mod = 'S';
+			  else
+               if (i == 19)
+                  from_mod = 'T';
+			  else
+               if (i == 20)
+                  from_mod = 'U';
+			  else
+               if (i == 21)
+                  from_mod = 'V';
+			  else
+               if (i == 22)
+                  from_mod = 'W';
+			  else
+               if (i == 23)
+                  from_mod = 'X';
+			  else
+               if (i == 24)
+                  from_mod = 'Y';
+			  else
+               if (i == 25)
+                  from_mod = 'Z';
 
                localtime_r(&(a_user_ptr->link_time[i][j]),&tm);
                snprintf(buf, 255, "%c,%s,%c,%s,%02d%02d%02d,%02d:%02d:%02d\n",
@@ -1264,7 +1505,7 @@ static void print_links_screen()
    for (inbound_pos = inbound_list.begin(); inbound_pos != inbound_list.end(); inbound_pos++)
    {
       inbound_ptr = (inbound *)inbound_pos->second;
-      for (i = 0; i < 5; i++)
+      for (i = 0; i < 26; i++)
       {
          if (inbound_ptr->links[i] != ' ')
          {
@@ -1279,8 +1520,71 @@ static void print_links_screen()
             else
             if (i == 3)
                from_mod = 'D';
-            else
+		   else
+            if (i == 4)
                from_mod = 'E';
+		   else
+            if (i == 5)
+               from_mod = 'F';
+		   else
+            if (i == 6)
+               from_mod = 'G';
+		   else
+            if (i == 7)
+               from_mod = 'H';
+		   else
+            if (i == 8)
+               from_mod = 'I';
+		   else
+            if (i == 9)
+               from_mod = 'J';
+		   else
+            if (i == 10)
+               from_mod = 'K';
+		   else
+            if (i == 11)
+               from_mod = 'L';
+		   else
+            if (i == 12)
+               from_mod = 'M';
+		   else
+            if (i == 13)
+               from_mod = 'N';
+		   else
+            if (i == 14)
+               from_mod = 'O';
+		   else
+            if (i == 15)
+               from_mod = 'P';
+		   else
+            if (i == 16)
+               from_mod = 'Q';
+		   else
+            if (i == 17)
+               from_mod = 'R';
+		   else
+            if (i == 18)
+               from_mod = 'S';
+		   else
+            if (i == 19)
+               from_mod = 'T';
+		   else
+            if (i == 20)
+               from_mod = 'U';
+		   else
+            if (i == 21)
+               from_mod = 'V';
+		   else
+            if (i == 22)
+               from_mod = 'W';
+		   else
+            if (i == 23)
+               from_mod = 'X';
+		   else
+            if (i == 24)
+               from_mod = 'Y';
+            else
+               from_mod = 'Z';
 
             localtime_r(&(inbound_ptr->connect_time), &tm);
             snprintf(buf, 255, "%c,%s,%c,%s,%02d%02d%02d,%02d:%02d:%02d\n",
@@ -1320,25 +1624,90 @@ static void print_links_file()
       for (pos = a_user_list.begin(); pos != a_user_list.end(); pos++)
       {
          a_user_ptr = (struct a_user *)pos->second;
-         for (i = 0; i < 5; i++)
+         for (i = 0; i < 26; i++)
          {
-            for (j = 0; j < 4; j++)
+            for (j = 0; j < 25; j++)
             {
                if (a_user_ptr->rpt_mods[i][j] != '\0')
                {
                   if (i == 0)
-                     from_mod = 'A';
-                  else
-                  if (i == 1)
-                     from_mod = 'B';
-                  else
-                  if (i == 2)
-                     from_mod = 'C';
-                  else
-                  if (i == 3)
-                     from_mod = 'D';
-                  else
-                     from_mod = 'E';
+					from_mod = 'A';
+				   else
+				   if (i == 1)
+					  from_mod = 'B';
+				   else
+				   if (i == 2)
+					  from_mod = 'C';
+				   else
+				   if (i == 3)
+					  from_mod = 'D';
+				   else
+				   if (i == 4)
+					  from_mod = 'E';
+				  else
+				   if (i == 5)
+					  from_mod = 'F';
+				  else
+				   if (i == 6)
+					  from_mod = 'G';
+				  else
+				   if (i == 7)
+					  from_mod = 'H';
+				  else
+				   if (i == 8)
+					  from_mod = 'I';
+				  else
+				   if (i == 9)
+					  from_mod = 'J';
+				  else
+				   if (i == 10)
+					  from_mod = 'K';
+				  else
+				   if (i == 11)
+					  from_mod = 'L';
+				  else
+				   if (i == 12)
+					  from_mod = 'M';
+				  else
+				   if (i == 13)
+					  from_mod = 'N';
+				  else
+				   if (i == 14)
+					  from_mod = 'O';
+				  else
+				   if (i == 15)
+					  from_mod = 'P';
+				  else
+				   if (i == 16)
+					  from_mod = 'Q';
+				  else
+				   if (i == 17)
+					  from_mod = 'R';
+				  else
+				   if (i == 18)
+					  from_mod = 'S';
+				  else
+				   if (i == 19)
+					  from_mod = 'T';
+				  else
+				   if (i == 20)
+					  from_mod = 'U';
+				  else
+				   if (i == 21)
+					  from_mod = 'V';
+				  else
+				   if (i == 22)
+					  from_mod = 'W';
+				  else
+				   if (i == 23)
+					  from_mod = 'X';
+				  else
+				   if (i == 24)
+					  from_mod = 'Y';
+				  else
+				   if (i == 25)
+					  from_mod = 'Z';
+				 
 
                localtime_r(&(a_user_ptr->link_time[i][j]),&tm);
                fprintf(statusfp, "%c,%s,%c,%s,%02d%02d%02d,%02d:%02d:%02d\n",
@@ -1356,23 +1725,86 @@ static void print_links_file()
       for (inbound_pos = inbound_list.begin(); inbound_pos != inbound_list.end(); inbound_pos++)
       {
          inbound_ptr = (inbound *)inbound_pos->second;
-         for (i = 0; i < 5; i++)
+         for (i = 0; i < 26; i++)
          {
             if (inbound_ptr->links[i] != ' ')
             {
-               if (i == 0)
-                  from_mod = 'A';
-               else
-               if (i == 1)
-                  from_mod = 'B';
-               else
-               if (i == 2)
-                  from_mod = 'C';
-               else
-               if (i == 3)
-                  from_mod = 'D';
-               else
-                  from_mod = 'E';
+				if (i == 0)
+				   from_mod = 'A';
+				else
+				if (i == 1)
+				   from_mod = 'B';
+				else
+				if (i == 2)
+				   from_mod = 'C';
+				else
+				if (i == 3)
+				   from_mod = 'D';
+			   else
+				if (i == 4)
+				   from_mod = 'E';
+			   else
+				if (i == 5)
+				   from_mod = 'F';
+			   else
+				if (i == 6)
+				   from_mod = 'G';
+			   else
+				if (i == 7)
+				   from_mod = 'H';
+			   else
+				if (i == 8)
+				   from_mod = 'I';
+			   else
+				if (i == 9)
+				   from_mod = 'J';
+			   else
+				if (i == 10)
+				   from_mod = 'K';
+			   else
+				if (i == 11)
+				   from_mod = 'L';
+			   else
+				if (i == 12)
+				   from_mod = 'M';
+			   else
+				if (i == 13)
+				   from_mod = 'N';
+			   else
+				if (i == 14)
+				   from_mod = 'O';
+			   else
+				if (i == 15)
+				   from_mod = 'P';
+			   else
+				if (i == 16)
+				   from_mod = 'Q';
+			   else
+				if (i == 17)
+				   from_mod = 'R';
+			   else
+				if (i == 18)
+				   from_mod = 'S';
+			   else
+				if (i == 19)
+				   from_mod = 'T';
+			   else
+				if (i == 20)
+				   from_mod = 'U';
+			   else
+				if (i == 21)
+				   from_mod = 'V';
+			   else
+				if (i == 22)
+				   from_mod = 'W';
+			   else
+				if (i == 23)
+				   from_mod = 'X';
+			   else
+				if (i == 24)
+				   from_mod = 'Y';
+				else
+				   from_mod = 'Z';
 
                localtime_r(&(inbound_ptr->connect_time), &tm);
                fprintf(statusfp, "%c,%s,%c,%s,%02d%02d%02d,%02d:%02d:%02d\n",
@@ -1508,7 +1940,7 @@ static void handle_cmd(char *buf)
 {
    char *p = NULL;
    char call[CALL_SIZE + 1];
-   char cmd[4];
+   char cmd[25];
    char cmdprompt[3];
    unsigned short i;
    char nak[8];
@@ -1857,7 +2289,7 @@ static void runit()
          strncpy(an_ip, inet_ntoa(fromInbound.sin_addr),IP_SIZE);
          an_ip[IP_SIZE] = '\0';
          snprintf(a_port, 6, "%d", ntohs(fromInbound.sin_port));
-         a_port[5] = '\0';
+         a_port[26] = '\0';
 
          /* LH */
          if ((recvlen3 == 4) &&
@@ -1921,7 +2353,7 @@ static void runit()
 
                      /* 39 entries */
                      refbuf[4] = 0x27;
-                     refbuf[5] = 0x00;
+                     refbuf[26] = 0x00;
 
                      sendto(ref_sock,(char *)refbuf,946,0,
                             (struct sockaddr *)&fromInbound,
@@ -1940,7 +2372,7 @@ static void runit()
 
                   memcpy(tmp, (char *)&j_idx, 2);
                   refbuf[4] = tmp[0];
-                  refbuf[5] = tmp[1];
+                  refbuf[26] = tmp[1];
 
                  sendto(ref_sock,(char *)refbuf, k_idx, 0,
                          (struct sockaddr *)&fromInbound,
@@ -1982,9 +2414,9 @@ static void runit()
                {
                   /* each entry has 20 bytes */
                   a_user_ptr = (struct a_user *)user_pos->second;
-                  for (module_idx = 0; module_idx < 5; module_idx++)
+                  for (module_idx = 0; module_idx < 26; module_idx++)
                   { 
-                     for (k = 0; k < 4; k++)
+                     for (k = 0; k < 25; k++)
                      {
                         if (a_user_ptr->rpt_mods[module_idx][k] != '\0')
                         {
@@ -2002,6 +2434,69 @@ static void runit()
                            else
                            if (module_idx == 4)
                               refbuf[8 + (20 * j_idx)] = 'E';   
+						  else
+                           if (module_idx == 5)
+                              refbuf[8 + (20 * j_idx)] = 'F';  
+						  else
+                           if (module_idx == 6)
+                              refbuf[8 + (20 * j_idx)] = 'G';  
+						  else
+                           if (module_idx == 7)
+                              refbuf[8 + (20 * j_idx)] = 'H';  
+						  else
+                           if (module_idx == 8)
+                              refbuf[8 + (20 * j_idx)] = 'I';  
+						  else
+                           if (module_idx == 9)
+                              refbuf[8 + (20 * j_idx)] = 'J';  
+						  else
+                           if (module_idx == 10)
+                              refbuf[8 + (20 * j_idx)] = 'K';  
+						  else
+                           if (module_idx == 11)
+                              refbuf[8 + (20 * j_idx)] = 'L';  
+						  else
+                           if (module_idx == 12)
+                              refbuf[8 + (20 * j_idx)] = 'M';  
+						  else
+                           if (module_idx == 13)
+                              refbuf[8 + (20 * j_idx)] = 'N';  
+						  else
+                           if (module_idx == 14)
+                              refbuf[8 + (20 * j_idx)] = 'O';  
+						  else
+                           if (module_idx == 15)
+                              refbuf[8 + (20 * j_idx)] = 'P';  
+						  else
+                           if (module_idx == 16)
+                              refbuf[8 + (20 * j_idx)] = 'Q';  
+						  else
+                           if (module_idx == 17)
+                              refbuf[8 + (20 * j_idx)] = 'R';  
+						  else
+                           if (module_idx == 18)
+                              refbuf[8 + (20 * j_idx)] = 'S';  
+						  else
+                           if (module_idx == 19)
+                              refbuf[8 + (20 * j_idx)] = 'T';  
+						  else
+                           if (module_idx == 20)
+                              refbuf[8 + (20 * j_idx)] = 'U';  
+						  else
+                           if (module_idx == 21)
+                              refbuf[8 + (20 * j_idx)] = 'V';  
+						  else
+                           if (module_idx == 22)
+                              refbuf[8 + (20 * j_idx)] = 'W';  
+						  else
+                           if (module_idx == 23)
+                              refbuf[8 + (20 * j_idx)] = 'X';  
+						  else
+                           if (module_idx == 24)
+                              refbuf[8 + (20 * j_idx)] = 'Y';  
+						  else
+                           if (module_idx == 25)
+                              refbuf[8 + (20 * j_idx)] = 'Z';  
                             
                            strcpy((char *)refbuf + 9 + (20 * j_idx), a_user_ptr->call);
                            refbuf[16 + (20 * j_idx)] = a_user_ptr->rpt_mods[module_idx][k];
@@ -2029,7 +2524,7 @@ static void runit()
                               k_idx = i_idx - 38;
                               memcpy(tmp, (char *)&k_idx, 2);
                               refbuf[4] = tmp[0];
-                              refbuf[5] = tmp[1];
+                              refbuf[26] = tmp[1];
 
                               sendto(ref_sock,(char *)refbuf,788,0,
                                      (struct sockaddr *)&fromInbound,
@@ -2056,7 +2551,7 @@ static void runit()
 
                   mempcpy(tmp, (char *)&k_idx, 2);
                   refbuf[4] = tmp[0];
-                  refbuf[5] = tmp[1];
+                  refbuf[26] = tmp[1];
 
                   sendto(ref_sock,(char *)refbuf, 8 + (j_idx * 20), 0,
                          (struct sockaddr *)&fromInbound,
@@ -2072,7 +2567,7 @@ static void runit()
                   inbound_ptr = (inbound *)inbound_pos->second;
                   if (inbound_ptr->is_ref)
                   {
-                     for (module_idx = 0; module_idx < 5; module_idx++)
+                     for (module_idx = 0; module_idx < 16; module_idx++)
                      {
                         if (inbound_ptr->links[module_idx] != ' ')
                         {
@@ -2089,7 +2584,70 @@ static void runit()
                               refbuf[8 + (20 * j_idx)] = 'D';
                            else
                            if (module_idx == 4)
-                              refbuf[8 + (20 * j_idx)] = 'E';
+                              refbuf[8 + (20 * j_idx)] = 'E';   
+						  else
+                           if (module_idx == 5)
+                              refbuf[8 + (20 * j_idx)] = 'F';  
+						  else
+                           if (module_idx == 6)
+                              refbuf[8 + (20 * j_idx)] = 'G';  
+						  else
+                           if (module_idx == 7)
+                              refbuf[8 + (20 * j_idx)] = 'H';  
+						  else
+                           if (module_idx == 8)
+                              refbuf[8 + (20 * j_idx)] = 'I';  
+						  else
+                           if (module_idx == 9)
+                              refbuf[8 + (20 * j_idx)] = 'J';  
+						  else
+                           if (module_idx == 10)
+                              refbuf[8 + (20 * j_idx)] = 'K';  
+						  else
+                           if (module_idx == 11)
+                              refbuf[8 + (20 * j_idx)] = 'L';  
+						  else
+                           if (module_idx == 12)
+                              refbuf[8 + (20 * j_idx)] = 'M';  
+						  else
+                           if (module_idx == 13)
+                              refbuf[8 + (20 * j_idx)] = 'N';  
+						  else
+                           if (module_idx == 14)
+                              refbuf[8 + (20 * j_idx)] = 'O';  
+						  else
+                           if (module_idx == 15)
+                              refbuf[8 + (20 * j_idx)] = 'P';  
+						  else
+                           if (module_idx == 16)
+                              refbuf[8 + (20 * j_idx)] = 'Q';  
+						  else
+                           if (module_idx == 17)
+                              refbuf[8 + (20 * j_idx)] = 'R';  
+						  else
+                           if (module_idx == 18)
+                              refbuf[8 + (20 * j_idx)] = 'S';  
+						  else
+                           if (module_idx == 19)
+                              refbuf[8 + (20 * j_idx)] = 'T';  
+						  else
+                           if (module_idx == 20)
+                              refbuf[8 + (20 * j_idx)] = 'U';  
+						  else
+                           if (module_idx == 21)
+                              refbuf[8 + (20 * j_idx)] = 'V';  
+						  else
+                           if (module_idx == 22)
+                              refbuf[8 + (20 * j_idx)] = 'W';  
+						  else
+                           if (module_idx == 23)
+                              refbuf[8 + (20 * j_idx)] = 'X';  
+						  else
+                           if (module_idx == 24)
+                              refbuf[8 + (20 * j_idx)] = 'Y';  
+						  else
+                           if (module_idx == 25)
+                              refbuf[8 + (20 * j_idx)] = 'Z';
              
                            strcpy((char *)refbuf + 9 + (20 * j_idx), inbound_ptr->call);
                            refbuf[16 + (20 * j_idx)] = inbound_ptr->links[module_idx];
@@ -2117,7 +2675,7 @@ static void runit()
                               k_idx = i_idx - 38;
                               memcpy(tmp, (char *)&k_idx, 2);
                               refbuf[4] = tmp[0];
-                              refbuf[5] = tmp[1];
+                              refbuf[26] = tmp[1];
 
                               sendto(ref_sock,(char *)refbuf,788,0,
                                      (struct sockaddr *)&fromInbound,
@@ -2144,7 +2702,7 @@ static void runit()
 
                   mempcpy(tmp, (char *)&k_idx, 2);
                   refbuf[4] = tmp[0];
-                  refbuf[5] = tmp[1];
+                  refbuf[26] = tmp[1];
 
                   sendto(ref_sock,(char *)refbuf, 8 + (j_idx * 20), 0,
                          (struct sockaddr *)&fromInbound,
@@ -2222,7 +2780,7 @@ static void runit()
                         k_idx = i_idx - 38;
                         memcpy(tmp, (char *)&k_idx, 2);
                         refbuf[4] = tmp[0];
-                        refbuf[5] = tmp[1];
+                        refbuf[26] = tmp[1];
 
                         sendto(ref_sock,(char *)refbuf,788,0,
                                (struct sockaddr *)&fromInbound,
@@ -2247,7 +2805,7 @@ static void runit()
 
                   mempcpy(tmp, (char *)&k_idx, 2);
                   refbuf[4] = tmp[0];
-                  refbuf[5] = tmp[1];
+                  refbuf[26] = tmp[1];
 
                   sendto(ref_sock,(char *)refbuf, 8 + (j_idx * 20), 0,
                          (struct sockaddr *)&fromInbound,
@@ -2278,7 +2836,7 @@ static void runit()
                refbuf[2] = 8;
                refbuf[3] = 0;
                refbuf[4] = 0xb5;
-               refbuf[5] = 0xae;
+               refbuf[26] = 0xae;
                refbuf[6] = 0x37;
                refbuf[7] = 0x4d;
                snprintf((char *)refbuf + 8, READBUFFER_SIZE - 1, 
@@ -2400,7 +2958,7 @@ static void runit()
          {
             /* we should already have the ip address in our list */
             if ((refbuf[4] == 79) &&
-                (refbuf[5] == 75) &&
+                (refbuf[26] == 75) &&
                 (refbuf[6] == 82))
                printf("Login OK to %s\n", an_ip);
             else
@@ -2440,7 +2998,7 @@ static void runit()
 
                refbuf[0] = 8;
                refbuf[4] = 70;
-               refbuf[5] = 65;
+               refbuf[26] = 65;
                refbuf[6] = 73;
                refbuf[7] = 76;
 
@@ -2457,7 +3015,7 @@ static void runit()
 
                   refbuf[0] = 8;
                   refbuf[4] = 70;
-                  refbuf[5] = 65;
+                  refbuf[26] = 65;
                   refbuf[6] = 73;
                   refbuf[7] = 76;
 
@@ -2492,7 +3050,7 @@ static void runit()
 
                         refbuf[0] = 8;
                         refbuf[4] = 79;
-                        refbuf[5] = 75;
+                        refbuf[26] = 75;
                         refbuf[6] = 82;
                         refbuf[7] = 87;
 
@@ -2508,7 +3066,7 @@ static void runit()
 
                         refbuf[0] = 8;
                         refbuf[4] = 70;
-                        refbuf[5] = 65;
+                        refbuf[26] = 65;
                         refbuf[6] = 73;
                         refbuf[7] = 76;
 
@@ -2523,7 +3081,7 @@ static void runit()
 
                      refbuf[0] = 8;
                      refbuf[4] = 70;
-                     refbuf[5] = 65;
+                     refbuf[26] = 65;
                      refbuf[6] = 73;
                      refbuf[7] = 76;
 
@@ -2660,7 +3218,7 @@ static void runit()
 
                   if (inbound_ptr->is_ref)
                   {
-                     for (i = 0; i < 5; i++)
+                     for (i = 0; i < 26; i++)
                      {
                         /* if the remote module matches */
                         if ((inbound_ptr->links[i] == refbuf[27]) &&
@@ -2677,8 +3235,71 @@ static void runit()
                            else
                            if (i == 3)
                               refbuf[27] = 'D';
-                           else
+						  else
+                           if (i == 4)
                               refbuf[27] = 'E';
+						  else
+                           if (i == 5)
+                              refbuf[27] = 'F';
+						  else
+                           if (i == 6)
+                              refbuf[27] = 'G';
+						  else
+                           if (i == 7)
+                              refbuf[27] = 'H';
+						  else
+                           if (i == 8)
+                              refbuf[27] = 'I';
+						  else
+                           if (i == 9)
+                              refbuf[27] = 'J';
+						  else
+                           if (i == 10)
+                              refbuf[27] = 'K';
+						  else
+                           if (i == 11)
+                              refbuf[27] = 'L';
+						  else
+                           if (i == 12)
+                              refbuf[27] = 'M';
+						  else
+                           if (i == 13)
+                              refbuf[27] = 'N';
+						  else
+                           if (i == 14)
+                              refbuf[27] = 'O';
+						  else
+                           if (i == 15)
+                              refbuf[27] = 'P';
+						  else
+                           if (i == 16)
+                              refbuf[27] = 'Q';
+						  else
+                           if (i == 17)
+                              refbuf[27] = 'R';
+						  else
+                           if (i == 18)
+                              refbuf[27] = 'S';
+						  else
+                           if (i == 19)
+                              refbuf[27] = 'T';
+						  else
+                           if (i == 20)
+                              refbuf[27] = 'U';
+						  else
+                           if (i == 21)
+                              refbuf[27] = 'V';
+						  else
+                           if (i == 22)
+                              refbuf[27] = 'W';
+						  else
+                           if (i == 23)
+                              refbuf[27] = 'X';
+						  else
+                           if (i == 24
+                              refbuf[27] = 'Y;
+                           else
+                              refbuf[27] = 'Z';
 
                            source_mod = refbuf[27];
 
@@ -2760,6 +3381,72 @@ static void runit()
                               else
                               if (refbuf[27] == 'D')
                                  k = 3;
+							 else
+                              if (refbuf[27] == 'E)
+                                 k = 4;
+							 else
+                              if (refbuf[27] == 'F')
+                                 k = 5;
+							 else
+                              if (refbuf[27] == 'G')
+                                 k = 6;
+							 else
+                              if (refbuf[27] == 'H')
+                                 k = 7;
+							 else
+                              if (refbuf[27] == 'I')
+                                 k = 8;
+							 else
+                              if (refbuf[27] == 'J')
+                                 k = 9;
+							 else
+                              if (refbuf[27] == 'K')
+                                 k = 10;
+							 else
+                              if (refbuf[27] == 'L')
+                                 k = 11;
+							 else
+                              if (refbuf[27] == 'M')
+                                 k = 12;
+							 else
+                              if (refbuf[27] == 'N')
+                                 k = 13;
+							 else
+                              if (refbuf[27] == 'O')
+                                 k = 14;
+							 else
+                              if (refbuf[27] == 'P')
+                                 k = 15;
+							 else
+                              if (refbuf[27] == 'Q')
+                                 k = 16;
+							 else
+                              if (refbuf[27] == 'R')
+                                 k = 17;
+							 else
+                              if (refbuf[27] == 'S')
+                                 k = 18;
+							 else
+                              if (refbuf[27] == 'T')
+                                 k = 19;
+							 else
+                              if (refbuf[27] == 'U')
+                                 k = 20;
+							 else
+                              if (refbuf[27] == 'V')
+                                 k = 21;
+							 else
+                              if (refbuf[27] == 'W')
+                                 k = 22;
+							 else
+                              if (refbuf[27] == 'X')
+                                 k = 23;
+							 else
+                              if (refbuf[27] == 'Y')
+                                 k = 24;
+							 else
+                              if (refbuf[27] == 'Z')
+                                 k = 25;
                               else
                                  k = -1;
 
@@ -2868,19 +3555,85 @@ static void runit()
                      {
 /********************** REPLACEMENT to send_a_pkt_to_all ***********************************************/
                         /* send header to repeaters */
-                        if (refbuf[27] == 'A')
-                           k = 0;
-                        else
-                        if (refbuf[27] == 'B')
-                           k = 1;
-                        else
-                        if (refbuf[27] == 'C')
-                           k = 2;
-                        else
-                        if (refbuf[27] == 'D')
-                           k = 3;
-                        else
-                           k = -1;
+					   if (refbuf[27] == 'A')
+							 k = 0;
+						  else
+						  if (refbuf[27] == 'B')
+							 k = 1;
+						  else
+						  if (refbuf[27] == 'C')
+							 k = 2;
+						  else
+						  if (refbuf[27] == 'D')
+							 k = 3;
+						 else
+						  if (refbuf[27] == 'E)
+							 k = 4;
+						 else
+						  if (refbuf[27] == 'F')
+							 k = 5;
+						 else
+						  if (refbuf[27] == 'G')
+							 k = 6;
+						 else
+						  if (refbuf[27] == 'H')
+							 k = 7;
+						 else
+						  if (refbuf[27] == 'I')
+							 k = 8;
+						 else
+						  if (refbuf[27] == 'J')
+							 k = 9;
+						 else
+						  if (refbuf[27] == 'K')
+							 k = 10;
+						 else
+						  if (refbuf[27] == 'L')
+							 k = 11;
+						 else
+						  if (refbuf[27] == 'M')
+							 k = 12;
+						 else
+						  if (refbuf[27] == 'N')
+							 k = 13;
+						 else
+						  if (refbuf[27] == 'O')
+							 k = 14;
+						 else
+						  if (refbuf[27] == 'P')
+							 k = 15;
+						 else
+						  if (refbuf[27] == 'Q')
+							 k = 16;
+						 else
+						  if (refbuf[27] == 'R')
+							 k = 17;
+						 else
+						  if (refbuf[27] == 'S')
+							 k = 18;
+						 else
+						  if (refbuf[27] == 'T')
+							 k = 19;
+						 else
+						  if (refbuf[27] == 'U')
+							 k = 20;
+						 else
+						  if (refbuf[27] == 'V')
+							 k = 21;
+						 else
+						  if (refbuf[27] == 'W')
+							 k = 22;
+						 else
+						  if (refbuf[27] == 'X')
+							 k = 23;
+						 else
+						  if (refbuf[27] == 'Y')
+							 k = 24;
+						 else
+						  if (refbuf[27] == 'Z')
+							 k = 25;
+						  else
+							 k = -1;
 
                         if (k >= 0)
                         {
@@ -3018,6 +3771,72 @@ static void runit()
                   else
                   if (source_mod == 'D')
                      i = 3;
+				 else
+                  if (source_mod == 'E')
+                     i = 4;
+				 else
+                  if (source_mod == 'F')
+                     i = 5;
+				 else
+                  if (source_mod == 'G')
+                     i = 6;
+				 else
+                  if (source_mod == 'H')
+                     i = 7;
+				 else
+                  if (source_mod == 'I')
+                     i = 8;
+				 else
+                  if (source_mod == 'J')
+                     i = 9;
+				 else
+                  if (source_mod == 'K')
+                     i = 10;
+				 else
+                  if (source_mod == 'L')
+                     i = 11;
+				 else
+                  if (source_mod == 'M')
+                     i = 12;
+				 else
+                  if (source_mod == 'N')
+                     i = 13;
+				 else
+                  if (source_mod == 'O')
+                     i = 14;
+				 else
+                  if (source_mod == 'P')
+                     i = 15;
+				 else
+                  if (source_mod == 'Q')
+                     i = 16;
+				 else
+                  if (source_mod == 'R')
+                     i = 17;
+				 else
+                  if (source_mod == 'S')
+                     i = 18;
+				 else
+                  if (source_mod == 'T')
+                     i = 19;
+				 else
+                  if (source_mod == 'U')
+                     i = 20;
+				 else
+                  if (source_mod == 'V')
+                     i = 21;
+				 else
+                  if (source_mod == 'W')
+                     i = 22;
+				 else
+                  if (source_mod == 'X')
+                     i = 23;
+				 else
+                  if (source_mod == 'Y')
+                     i = 24;
+				 else
+                  if (source_mod == 'Z')
+                     i = 25;
 
                   if (i >= 0)
                   {
@@ -3163,7 +3982,14 @@ static void runit()
 
                   /* remote repeater band */
                   if ((readBuffer[8] == 'A') || (readBuffer[8] == 'B') || (readBuffer[8] == 'C') ||
-                      (readBuffer[8] == 'D'))
+					  (readBuffer[8] == 'D') || (readBuffer[8] == 'E') || (readBuffer[8] == 'F') ||
+					  (readBuffer[8] == 'G') || (readBuffer[8] == 'H') || (readBuffer[8] == 'I') ||
+					  (readBuffer[8] == 'J') || (readBuffer[8] == 'K') || (readBuffer[8] == 'L') ||
+					  (readBuffer[8] == 'M') || (readBuffer[8] == 'N') || (readBuffer[8] == 'O') ||
+					  (readBuffer[8] == 'P') || (readBuffer[8] == 'Q') || (readBuffer[8] == 'R') ||
+					  (readBuffer[8] == 'S') || (readBuffer[8] == 'T') || (readBuffer[8] == 'U') ||
+					  (readBuffer[8] == 'V') || (readBuffer[8] == 'W') || (readBuffer[8] == 'X') ||
+                      (readBuffer[8] == 'Y') || (readBuffer[8] == 'Z'))
                   {
                      /* local reflector module */
                      if (readBuffer[9] == ' ')
@@ -3180,11 +4006,77 @@ static void runit()
                         else
                         if (readBuffer[8] == 'C')
                            k = 2;
-                        else
+					   else
+                        if (readBuffer[8] == 'D')
                            k = 3;
+					   else
+                        if (readBuffer[8] == 'E')
+                           k = 4;
+					   else
+                        if (readBuffer[8] == 'F')
+                           k = 5;
+					   else
+                        if (readBuffer[8] == 'G')
+                           k = 6;
+					   else
+                        if (readBuffer[8] == 'H')
+                           k = 7;
+					   else
+                        if (readBuffer[8] == 'I')
+                           k = 8;
+					   else
+                        if (readBuffer[8] == 'J')
+                           k = 9;
+					   else
+                        if (readBuffer[8] == 'K')
+                           k = 10;
+					   else
+                        if (readBuffer[8] == 'L')
+                           k = 11;
+					   else
+                        if (readBuffer[8] == 'M')
+                           k = 12;
+					   else
+                        if (readBuffer[8] == 'N')
+                           k = 13;
+					   else
+                        if (readBuffer[8] == 'O')
+                           k = 14;
+					   else
+                        if (readBuffer[8] == 'P')
+                           k = 15;
+					   else
+                        if (readBuffer[8] == 'Q')
+                           k = 16;
+					   else
+                        if (readBuffer[8] == 'R')
+                           k = 17;
+					   else
+                        if (readBuffer[8] == 'S')
+                           k = 18;
+					   else
+                        if (readBuffer[8] == 'T')
+                           k = 19;
+					   else
+                        if (readBuffer[8] == 'U')
+                           k = 20;
+					   else
+                        if (readBuffer[8] == 'V')
+                           k = 21;
+					   else
+                        if (readBuffer[8] == 'W')
+                           k = 22;
+					   else
+                        if (readBuffer[8] == 'X')
+                           k = 23;
+					   else
+                        if (readBuffer[8] == 'Y')
+                           k = 24;
+                        else
+                           k = 25;
 
                         /* for all the reflector modules, zero out the repeater band */
-                        for (i = 0; i < 5; i++)
+                        for (i = 0; i < 26; i++)
                         {
                            /*** inform the remote XRF reflector: start ***/
                            if (a_user_ptr->is_xrf)
@@ -3203,13 +4095,76 @@ static void runit()
                                  else
                                  if (i == 3)
                                     reply_to_xrf[8] = 'D';
-                                 else
+								 else
+                                 if (i == 4)
                                     reply_to_xrf[8] = 'E';
+								 else
+                                 if (i == 5)
+                                    reply_to_xrf[8] = 'F';
+								 else
+                                 if (i == 6)
+                                    reply_to_xrf[8] = 'G';
+								 else
+                                 if (i == 7)
+                                    reply_to_xrf[8] = 'H';
+								 else
+                                 if (i == 8)
+                                    reply_to_xrf[8] = 'I';
+								 else
+                                 if (i == 9)
+                                    reply_to_xrf[8] = 'J';
+								 else
+                                 if (i == 10)
+                                    reply_to_xrf[8] = 'K';
+								 else
+                                 if (i == 11)
+                                    reply_to_xrf[8] = 'L';
+								 else
+                                 if (i == 12)
+                                    reply_to_xrf[8] = 'M';
+								 else
+                                 if (i == 13)
+                                    reply_to_xrf[8] = 'N';
+								 else
+                                 if (i == 14)
+                                    reply_to_xrf[8] = 'O';
+								 else
+                                 if (i == 15)
+                                    reply_to_xrf[8] = 'P';
+								 else
+                                 if (i == 16)
+                                    reply_to_xrf[8] = 'Q';
+								 else
+                                 if (i == 17)
+                                    reply_to_xrf[8] = 'R';
+								 else
+                                 if (i == 18)
+                                    reply_to_xrf[8] = 'S';
+								 else
+                                 if (i == 19)
+                                    reply_to_xrf[8] = 'T';
+								 else
+                                 if (i == 20)
+                                    reply_to_xrf[8] = 'U';
+								 else
+                                 if (i == 21)
+                                    reply_to_xrf[8] = 'V';
+								 else
+                                 if (i == 22)
+                                    reply_to_xrf[8] = 'W';
+								 else
+                                 if (i == 23)
+                                    reply_to_xrf[8] = 'X';
+								 else
+                                 if (i == 24)
+                                    reply_to_xrf[8] = 'Y';
+                                 else
+                                    reply_to_xrf[8] = 'Z';
 
                                  reply_to_xrf[9] = ' ';
                                  reply_to_xrf[10] = '\0';
 
-                                 for (j = 0; j < 5; j++)
+                                 for (j = 0; j < 26; j++)
                                     sendto(srv_sock, reply_to_xrf, CALL_SIZE + 3,
                                            0,(struct sockaddr *)&(a_user_ptr->sin),
                                            sizeof(struct sockaddr_in));
@@ -3224,9 +4179,9 @@ static void runit()
                         print_links_file();
 
                         /* if this repeater has unlinked everything, disconnect it */
-                        for (i = 0; i < 5; i++)
+                        for (i = 0; i < 26; i++)
                         {
-                           for (k = 0; k < 4; k++)
+                           for (k = 0; k < 25; k++)
                            {
                               if (a_user_ptr->rpt_mods[i][k] != '\0')
                                  break;
@@ -3261,37 +4216,173 @@ static void runit()
 
                         /* local reflector module */
                         if ((readBuffer[9] == 'A') || (readBuffer[9] == 'B') || (readBuffer[9] == 'C') ||
-                            (readBuffer[9] == 'D') || (readBuffer[9] == 'E'))
+                            (readBuffer[9] == 'D') || (readBuffer[9] == 'E') || (readBuffer[9] == 'F') ||
+							(readBuffer[9] == 'G') || (readBuffer[9] == 'H') || (readBuffer[9] == 'I') ||
+							(readBuffer[9] == 'J') || (readBuffer[9] == 'K') || (readBuffer[9] == 'L') ||
+							(readBuffer[9] == 'M') || (readBuffer[9] == 'N') || (readBuffer[9] == 'O') ||
+							(readBuffer[9] == 'P') || (readBuffer[9] == 'Q') || (readBuffer[9] == 'R') ||
+							(readBuffer[9] == 'S') || (readBuffer[9] == 'T') || (readBuffer[9] == 'U') ||
+							(readBuffer[9] == 'V') || (readBuffer[9] == 'W') || (readBuffer[9] == 'X') ||
+							(readBuffer[9] == 'Y') || (readBuffer[9] == 'Z'))
                         {
 
                            /* local reflector module */
-                           if (readBuffer[9] == 'A')
-                              i = 0;
-                           else
-                           if (readBuffer[9] == 'B')
-                              i = 1;
-                           else
-                           if (readBuffer[9] == 'C')
-                              i = 2;
-                           else
-                           if (readBuffer[9] == 'D')
-                              i = 3;
-                           else
-                              i = 4;
+							if (readBuffer[9] == 'A')
+							   i = 0;
+							else
+							if (readBuffer[9] == 'B')
+							   i = 1;
+							else
+							if (readBuffer[9] == 'C')
+							   i = 2;
+						   else
+							if (readBuffer[9] == 'D')
+							   i = 3;
+						   else
+							if (readBuffer[9] == 'E')
+							   i = 4;
+						   else
+							if (readBuffer[9] == 'F')
+							   i = 5;
+						   else
+							if (readBuffer[9] == 'G')
+							   i = 6;
+						   else
+							if (readBuffer[9] == 'H')
+							   i = 7;
+						   else
+							if (readBuffer[9] == 'I')
+							   i = 8;
+						   else
+							if (readBuffer[9] == 'J')
+							   i = 9;
+						   else
+							if (readBuffer[9] == 'K')
+							   i = 10;
+						   else
+							if (readBuffer[9] == 'L')
+							   i = 11;
+						   else
+							if (readBuffer[9] == 'M')
+							   i = 12;
+						   else
+							if (readBuffer[9] == 'N')
+							   i = 13;
+						   else
+							if (readBuffer[9] == 'O')
+							   i = 14;
+						   else
+							if (readBuffer[9] == 'P')
+							   i = 15;
+						   else
+							if (readBuffer[9] == 'Q')
+							   i = 16;
+						   else
+							if (readBuffer[9] == 'R')
+							   i = 17;
+						   else
+							if (readBuffer[9] == 'S')
+							   i = 18;
+						   else
+							if (readBuffer[9] == 'T')
+							   i = 19;
+						   else
+							if (readBuffer[9] == 'U')
+							   i = 20;
+						   else
+							if (readBuffer[9] == 'V')
+							   i = 21;
+						   else
+							if (readBuffer[9] == 'W')
+							   i = 22;
+						   else
+							if (readBuffer[9] == 'X')
+							   i = 23;
+						   else
+							if (readBuffer[9] == 'Y')
+							   i = 24;
+							else
+							   i = 25;
 
                            /* remote repeater band */
-                           if (readBuffer[8] == 'A')
-                              k = 0;
-                           else
-                           if (readBuffer[8] == 'B')
-                              k = 1;
-                           else
-                           if (readBuffer[8] == 'C')
-                              k = 2;
-                           else
-                              k = 3;
+							if (readBuffer[8] == 'A')
+							   k = 0;
+							else
+							if (readBuffer[8] == 'B')
+							   k = 1;
+							else
+							if (readBuffer[8] == 'C')
+							   k = 2;
+						   else
+							if (readBuffer[8] == 'D')
+							   k = 3;
+						   else
+							if (readBuffer[8] == 'E')
+							   k = 4;
+						   else
+							if (readBuffer[8] == 'F')
+							   k = 5;
+						   else
+							if (readBuffer[8] == 'G')
+							   k = 6;
+						   else
+							if (readBuffer[8] == 'H')
+							   k = 7;
+						   else
+							if (readBuffer[8] == 'I')
+							   k = 8;
+						   else
+							if (readBuffer[8] == 'J')
+							   k = 9;
+						   else
+							if (readBuffer[8] == 'K')
+							   k = 10;
+						   else
+							if (readBuffer[8] == 'L')
+							   k = 11;
+						   else
+							if (readBuffer[8] == 'M')
+							   k = 12;
+						   else
+							if (readBuffer[8] == 'N')
+							   k = 13;
+						   else
+							if (readBuffer[8] == 'O')
+							   k = 14;
+						   else
+							if (readBuffer[8] == 'P')
+							   k = 15;
+						   else
+							if (readBuffer[8] == 'Q')
+							   k = 16;
+						   else
+							if (readBuffer[8] == 'R')
+							   k = 17;
+						   else
+							if (readBuffer[8] == 'S')
+							   k = 18;
+						   else
+							if (readBuffer[8] == 'T')
+							   k = 19;
+						   else
+							if (readBuffer[8] == 'U')
+							   k = 20;
+						   else
+							if (readBuffer[8] == 'V')
+							   k = 21;
+						   else
+							if (readBuffer[8] == 'W')
+							   k = 22;
+						   else
+							if (readBuffer[8] == 'X')
+							   k = 23;
+						   else
+							if (readBuffer[8] == 'Y')
+							   k = 24;
+							else
+							   k = 25;
 
-                           for (j = 0; j < 5; j++)
+                           for (j = 0; j < 26; j++)
                            {
                               if (i == j)
                               {
@@ -3401,12 +4492,26 @@ static void runit()
                      {
                         /* reflector module */
                         if ((readBuffer[9] != 'A') && (readBuffer[9] != 'B') && (readBuffer[9] != 'C') &&
-                            (readBuffer[9] != 'D') && (readBuffer[9] != 'E'))
+							(readBuffer[9] != 'D') && (readBuffer[9] != 'E') && (readBuffer[9] != 'F') &&
+							(readBuffer[9] != 'G') && (readBuffer[9] != 'H') && (readBuffer[9] != 'I') &&
+							(readBuffer[9] != 'J') && (readBuffer[9] != 'K') && (readBuffer[9] != 'L') &&
+							(readBuffer[9] != 'M') && (readBuffer[9] != 'N') && (readBuffer[9] != 'O') &&
+							(readBuffer[9] != 'P') && (readBuffer[9] != 'Q') && (readBuffer[9] != 'R') &&
+							(readBuffer[9] != 'S') && (readBuffer[9] != 'T') && (readBuffer[9] != 'U') &&
+							(readBuffer[9] != 'V') && (readBuffer[9] != 'W') && (readBuffer[9] != 'X') &&
+                            (readBuffer[9] != 'Y') && (readBuffer[9] != 'Z'))
                            allowed_to_connect = false; 
                         else
                         /* repeater band */
                         if ((readBuffer[8] != 'A') && (readBuffer[8] != 'B') && (readBuffer[8] != 'C') &&
-                            (readBuffer[8] != 'D'))
+							(readBuffer[8] != 'D') && (readBuffer[8] != 'E') && (readBuffer[8] != 'F') &&
+							(readBuffer[8] != 'G') && (readBuffer[8] != 'H') && (readBuffer[8] != 'I') &&
+							(readBuffer[8] != 'J') && (readBuffer[8] != 'K') && (readBuffer[8] != 'L') &&
+							(readBuffer[8] != 'M') && (readBuffer[8] != 'N') && (readBuffer[8] != 'O') &&
+							(readBuffer[8] != 'P') && (readBuffer[8] != 'Q') && (readBuffer[8] != 'R') &&
+							(readBuffer[8] != 'S') && (readBuffer[8] != 'T') && (readBuffer[8] != 'U') &&
+							(readBuffer[8] != 'V') && (readBuffer[8] != 'W') && (readBuffer[8] != 'X') &&
+                            (readBuffer[8] != 'Y') && (readBuffer[8] != 'Z'))
                            allowed_to_connect = false; 
                      }
                   }
@@ -3438,9 +4543,9 @@ static void runit()
                      /* w1bsb: a_user_ptr->sin.sin_port = htons(LISTEN_PORT); */
 
                      /* Initialize links */
-                     for (i = 0; i < 5; i++)
+                     for (i = 0; i < 26; i++)
                      {
-                        for (k = 0; k < 4; k++)
+                        for (k = 0; k < 25; k++)
                         {
                            a_user_ptr->rpt_mods[i][k] = '\0';
                            a_user_ptr->link_time[i][k] = 0;
@@ -3457,31 +4562,160 @@ static void runit()
                         */
 
                         /* local reflector module */
-                        if (readBuffer[9] == 'A')
-                           i = 0;
-                        else
-                        if (readBuffer[9] == 'B')
-                           i = 1;
-                        else
-                        if (readBuffer[9] == 'C')
-                           i = 2;
-                        else
-                        if (readBuffer[9] == 'D')
-                           i = 3;
-                        else
-                           i = 4;
+						if (readBuffer[9] == 'A')
+						   i = 0;
+						else
+						if (readBuffer[9] == 'B')
+						   i = 1;
+						else
+						if (readBuffer[9] == 'C')
+						   i = 2;
+					   else
+						if (readBuffer[9] == 'D')
+						   i = 3;
+					   else
+						if (readBuffer[9] == 'E')
+						   i = 4;
+					   else
+						if (readBuffer[9] == 'F')
+						   i = 5;
+					   else
+						if (readBuffer[9] == 'G')
+						   i = 6;
+					   else
+						if (readBuffer[9] == 'H')
+						   i = 7;
+					   else
+						if (readBuffer[9] == 'I')
+						   i = 8;
+					   else
+						if (readBuffer[9] == 'J')
+						   i = 9;
+					   else
+						if (readBuffer[9] == 'K')
+						   i = 10;
+					   else
+						if (readBuffer[9] == 'L')
+						   i = 11;
+					   else
+						if (readBuffer[9] == 'M')
+						   i = 12;
+					   else
+						if (readBuffer[9] == 'N')
+						   i = 13;
+					   else
+						if (readBuffer[9] == 'O')
+						   i = 14;
+					   else
+						if (readBuffer[9] == 'P')
+						   i = 15;
+					   else
+						if (readBuffer[9] == 'Q')
+						   i = 16;
+					   else
+						if (readBuffer[9] == 'R')
+						   i = 17;
+					   else
+						if (readBuffer[9] == 'S')
+						   i = 18;
+					   else
+						if (readBuffer[9] == 'T')
+						   i = 19;
+					   else
+						if (readBuffer[9] == 'U')
+						   i = 20;
+					   else
+						if (readBuffer[9] == 'V')
+						   i = 21;
+					   else
+						if (readBuffer[9] == 'W')
+						   i = 22;
+					   else
+						if (readBuffer[9] == 'X')
+						   i = 23;
+					   else
+						if (readBuffer[9] == 'Y')
+						   i = 24;
+						else
+						   i = 25;
 
-                        /* remote repeater band */
-                        if (readBuffer[8] == 'A')
-                           k = 0;
-                        else
-                        if (readBuffer[8] == 'B')
-                           k = 1;
-                        else
-                        if (readBuffer[8] == 'C')
-                           k = 2;
-                        else
-                           k = 3;
+					   /* remote repeater band */
+						if (readBuffer[8] == 'A')
+						   k = 0;
+						else
+						if (readBuffer[8] == 'B')
+						   k = 1;
+						else
+						if (readBuffer[8] == 'C')
+						   k = 2;
+					   else
+						if (readBuffer[8] == 'D')
+						   k = 3;
+					   else
+						if (readBuffer[8] == 'E')
+						   k = 4;
+					   else
+						if (readBuffer[8] == 'F')
+						   k = 5;
+					   else
+						if (readBuffer[8] == 'G')
+						   k = 6;
+					   else
+						if (readBuffer[8] == 'H')
+						   k = 7;
+					   else
+						if (readBuffer[8] == 'I')
+						   k = 8;
+					   else
+						if (readBuffer[8] == 'J')
+						   k = 9;
+					   else
+						if (readBuffer[8] == 'K')
+						   k = 10;
+					   else
+						if (readBuffer[8] == 'L')
+						   k = 11;
+					   else
+						if (readBuffer[8] == 'M')
+						   k = 12;
+					   else
+						if (readBuffer[8] == 'N')
+						   k = 13;
+					   else
+						if (readBuffer[8] == 'O')
+						   k = 14;
+					   else
+						if (readBuffer[8] == 'P')
+						   k = 15;
+					   else
+						if (readBuffer[8] == 'Q')
+						   k = 16;
+					   else
+						if (readBuffer[8] == 'R')
+						   k = 17;
+					   else
+						if (readBuffer[8] == 'S')
+						   k = 18;
+					   else
+						if (readBuffer[8] == 'T')
+						   k = 19;
+					   else
+						if (readBuffer[8] == 'U')
+						   k = 20;
+					   else
+						if (readBuffer[8] == 'V')
+						   k = 21;
+					   else
+						if (readBuffer[8] == 'W')
+						   k = 22;
+					   else
+						if (readBuffer[8] == 'X')
+						   k = 23;
+					   else
+						if (readBuffer[8] == 'Y')
+						   k = 24;
+						else
+						   k = 25;
 
                         a_user_ptr->rpt_mods[i][k] = readBuffer[8];
                         time(&a_user_ptr->link_time[i][k]);
@@ -3514,7 +4748,7 @@ static void runit()
                            reply_to_xrf[8] = readBuffer[9];
                            reply_to_xrf[9] = readBuffer[8];
                            reply_to_xrf[10] = '\0';
-                           for (n = 0; n < 5; n++)
+                           for (n = 0; n < 26; n++)
                               sendto(srv_sock, reply_to_xrf, CALL_SIZE + 3,
                                      0,(struct sockaddr *)&(a_user_ptr->sin),
                                      sizeof(struct sockaddr_in));
@@ -3622,24 +4856,90 @@ static void runit()
                      {
                         /* a remote reflector sends its own data */
                         /* remote band of reflector */
-                        if (readBuffer[25] == 'A')
-                           k = 0;
-                        else
-                        if (readBuffer[25] == 'B')
-                           k = 1;
-                        else
-                        if (readBuffer[25] == 'C')
-                           k = 2;
-                        else
-                        if (readBuffer[25] == 'D')
-                           k = 3;
+						if (readBuffer[25] == 'A')
+						   k = 0;
+						else
+						if (readBuffer[25] == 'B')
+						   k = 1;
+						else
+						if (readBuffer[25] == 'C')
+						   k = 2;
+					   else
+						if (readBuffer[25] == 'D')
+						   k = 3;
+					   else
+						if (readBuffer[25] == 'E')
+						   k = 4;
+					   else
+						if (readBuffer[25] == 'F')
+						   k = 5;
+					   else
+						if (readBuffer[25] == 'G')
+						   k = 6;
+					   else
+						if (readBuffer[25] == 'H')
+						   k = 7;
+					   else
+						if (readBuffer[25] == 'I')
+						   k = 8;
+					   else
+						if (readBuffer[25] == 'J')
+						   k = 9;
+					   else
+						if (readBuffer[25] == 'K')
+						   k = 10;
+					   else
+						if (readBuffer[25] == 'L')
+						   k = 11;
+					   else
+						if (readBuffer[25] == 'M')
+						   k = 12;
+					   else
+						if (readBuffer[25] == 'N')
+						   k = 13;
+					   else
+						if (readBuffer[25] == 'O')
+						   k = 14;
+					   else
+						if (readBuffer[25] == 'P')
+						   k = 15;
+					   else
+						if (readBuffer[25] == 'Q')
+						   k = 16;
+					   else
+						if (readBuffer[25] == 'R')
+						   k = 17;
+					   else
+						if (readBuffer[25] == 'S')
+						   k = 18;
+					   else
+						if (readBuffer[25] == 'T')
+						   k = 19;
+					   else
+						if (readBuffer[25] == 'U')
+						   k = 20;
+					   else
+						if (readBuffer[25] == 'V')
+						   k = 21;
+					   else
+						if (readBuffer[25] == 'W')
+						   k = 22;
+					   else
+						if (readBuffer[25] == 'X')
+						   k = 23;
+					   else
+						if (readBuffer[25] == 'Y')
+						   k = 24;
+						else
+						if (readBuffer[25] == 'Z')
+						   k = 25;
                         else
                            k = -1;
 
                         if (k >= 0)
                         {
                            // find our local module
-                           for (i = 0; i < 5; i++)
+                           for (i = 0; i < 26; i++)
                            {
                               if (a_user_ptr->rpt_mods[i][k] == readBuffer[25])
                               {
@@ -3664,8 +4964,71 @@ static void runit()
                                  else
                                  if (i == 3)
                                     readBuffer[25] = 'D';
-                                 else
+								 else
+                                 if (i == 4)
                                     readBuffer[25] = 'E';
+								 else
+                                 if (i == 5)
+                                    readBuffer[25] = 'F';
+								 else
+                                 if (i == 6)
+                                    readBuffer[25] = 'G';
+								 else
+                                 if (i == 7)
+                                    readBuffer[25] = 'H';
+								 else
+                                 if (i == 8)
+                                    readBuffer[25] = 'I';
+								 else
+                                 if (i == 9)
+                                    readBuffer[25] = 'J';
+								 else
+                                 if (i == 10)
+                                    readBuffer[25] = 'K';
+								 else
+                                 if (i == 11)
+                                    readBuffer[25] = 'L';
+								 else
+                                 if (i == 12)
+                                    readBuffer[25] = 'M';
+								 else
+                                 if (i == 13)
+                                    readBuffer[25] = 'N';
+								 else
+                                 if (i == 14)
+                                    readBuffer[25] = 'O';
+								 else
+                                 if (i == 15)
+                                    readBuffer[25] = 'P';
+								 else
+                                 if (i == 16)
+                                    readBuffer[25] = 'Q';
+								 else
+                                 if (i == 17)
+                                    readBuffer[25] = 'R';
+								 else
+                                 if (i == 18)
+                                    readBuffer[25] = 'S';
+								 else
+                                 if (i == 19)
+                                    readBuffer[25] = 'T';
+								 else
+                                 if (i == 20)
+                                    readBuffer[25] = 'U';
+								 else
+                                 if (i == 21)
+                                    readBuffer[25] = 'V';
+								 else
+                                 if (i == 22)
+                                    readBuffer[25] = 'W';
+								 else
+                                 if (i == 23)
+                                    readBuffer[25] = 'X';
+								 else
+                                 if (i == 24)
+                                    readBuffer[25] = 'Y';
+                                 else
+                                    readBuffer[25] = 'Z';
                      
                                  break;
                      
@@ -3691,27 +5054,90 @@ static void runit()
                            /* repeater is not using g2_link, try this */
 
                            /* byte 25 is our reflector mod */
-                           if (readBuffer[25] == 'A')
-                              i = 0;
-                           else
-                           if (readBuffer[25] == 'B')
-                              i = 1;
-                           else
-                           if (readBuffer[25] == 'C')
-                              i = 2;
-                           else
-                           if (readBuffer[25] == 'D')
-                              i = 3;
-                           else
-                           if (readBuffer[25] == 'E')
-                              i = 4;
+							if (readBuffer[9] == 'A')
+							   i = 0;
+							else
+							if (readBuffer[9] == 'B')
+							   i = 1;
+							else
+							if (readBuffer[9] == 'C')
+							   i = 2;
+						   else
+							if (readBuffer[9] == 'D')
+							   i = 3;
+						   else
+							if (readBuffer[9] == 'E')
+							   i = 4;
+						   else
+							if (readBuffer[9] == 'F')
+							   i = 5;
+						   else
+							if (readBuffer[9] == 'G')
+							   i = 6;
+						   else
+							if (readBuffer[9] == 'H')
+							   i = 7;
+						   else
+							if (readBuffer[9] == 'I')
+							   i = 8;
+						   else
+							if (readBuffer[9] == 'J')
+							   i = 9;
+						   else
+							if (readBuffer[9] == 'K')
+							   i = 10;
+						   else
+							if (readBuffer[9] == 'L')
+							   i = 11;
+						   else
+							if (readBuffer[9] == 'M')
+							   i = 12;
+						   else
+							if (readBuffer[9] == 'N')
+							   i = 13;
+						   else
+							if (readBuffer[9] == 'O')
+							   i = 14;
+						   else
+							if (readBuffer[9] == 'P')
+							   i = 15;
+						   else
+							if (readBuffer[9] == 'Q')
+							   i = 16;
+						   else
+							if (readBuffer[9] == 'R')
+							   i = 17;
+						   else
+							if (readBuffer[9] == 'S')
+							   i = 18;
+						   else
+							if (readBuffer[9] == 'T')
+							   i = 19;
+						   else
+							if (readBuffer[9] == 'U')
+							   i = 20;
+						   else
+							if (readBuffer[9] == 'V')
+							   i = 21;
+						   else
+							if (readBuffer[9] == 'W')
+							   i = 22;
+						   else
+							if (readBuffer[9] == 'X')
+							   i = 23;
+						   else
+							if (readBuffer[9] == 'Y')
+							   i = 24;
+							else
+							if (readBuffer[9] == 'Z')
+							   i = 25;
                            else
                               i = -1;
 
                            /* now find the first band of the remote repeater linked to our reflector mod */
                            if (i >= 0)
                            {
-                              for (k = 0; k < 4; k++)
+                              for (k = 0; k < 25; k++)
                               {
                                  if (a_user_ptr->rpt_mods[i][k] != '\0')
                                  {
@@ -3889,17 +5315,83 @@ static void runit()
                   source_mod = refbuf[27];
 
                   i = -1;
-                  if (refbuf[27] == 'A')
-                     i = 0;
-                  else
-                  if (refbuf[27] == 'B')
-                     i = 1;
-                  else
-                  if (refbuf[27] == 'C')
-                     i = 2;
-                  else
-                  if (refbuf[27] == 'D')
-                     i = 3;
+				  if (refbuf[27] == 'A')
+					 i = 0;
+				  else
+				  if (refbuf[27] == 'B')
+					 i = 1;
+				  else
+				  if (refbuf[27] == 'C')
+					 i = 2;
+				  else
+				  if (refbuf[27] == 'D')
+					 i = 3;
+				 else
+				  if (refbuf[27] == 'E)
+					 i = 4;
+				 else
+				  if (refbuf[27] == 'F')
+					 i = 5;
+				 else
+				  if (refbuf[27] == 'G')
+					 i = 6;
+				 else
+				  if (refbuf[27] == 'H')
+					 i = 7;
+				 else
+				  if (refbuf[27] == 'I')
+					 i = 8;
+				 else
+				  if (refbuf[27] == 'J')
+					 i = 9;
+				 else
+				  if (refbuf[27] == 'K')
+					 i = 10;
+				 else
+				  if (refbuf[27] == 'L')
+					 i = 11;
+				 else
+				  if (refbuf[27] == 'M')
+					 i = 12;
+				 else
+				  if (refbuf[27] == 'N')
+					 i = 13;
+				 else
+				  if (refbuf[27] == 'O')
+					 i = 14;
+				 else
+				  if (refbuf[27] == 'P')
+					 i = 15;
+				 else
+				  if (refbuf[27] == 'Q')
+					 i = 16;
+				 else
+				  if (refbuf[27] == 'R')
+					 i = 17;
+				 else
+				  if (refbuf[27] == 'S')
+					 i = 18;
+				 else
+				  if (refbuf[27] == 'T')
+					 i = 19;
+				 else
+				  if (refbuf[27] == 'U')
+					 i = 20;
+				 else
+				  if (refbuf[27] == 'V')
+					 i = 21;
+				 else
+				  if (refbuf[27] == 'W')
+					 i = 22;
+				 else
+				  if (refbuf[27] == 'X')
+					 i = 23;
+				 else
+				  if (refbuf[27] == 'Y')
+					 i = 24;
+				 else
+				  if (refbuf[27] == 'Z')
+					 i = 25;
 
                   if (i >= 0)
                   {
@@ -3951,7 +5443,7 @@ static void runit()
                         {
                            if (!inbound_ptr2->is_ref)
                            {
-                              for (i = 0; i < 4; i++)
+                              for (i = 0; i < 25; i++)
                               {
                                  if ((refbuf[14] == temp_r[i].hdr[14]) &&
                                      (refbuf[15] == temp_r[i].hdr[15]) &&
@@ -3974,7 +5466,7 @@ static void runit()
                         {
                            /* treat the remote reflector with resepct */
                            /* send it only if the module matches */
-                           for (i = 0; i < 4; i++)
+                           for (i = 0; i < 25; i++)
                            {
                               if ((refbuf[14] == temp_r[i].hdr[14]) &&
                                   (refbuf[15] == temp_r[i].hdr[15]) &&
@@ -3998,17 +5490,83 @@ static void runit()
 /****************************** REPLACEMENT to send_a_pkt_to_all ****************************************************/
                   if (recvlen == 56)
                   {
-                     if (readBuffer[25] == 'A')
-                        k = 0;
-                     else
-                     if (readBuffer[25] == 'B')
-                        k = 1;
-                     else
-                     if (readBuffer[25] == 'C')
-                        k = 2;
-                     else
-                     if (readBuffer[25] == 'D')
-                        k = 3;
+					  if (readBuffer[25] == 'A')
+						 k = 0;
+					  else
+					  if (readBuffer[25] == 'B')
+						 k = 1;
+					  else
+					  if (readBuffer[25] == 'C')
+						 k = 2;
+					  else
+					  if (readBuffer[25] == 'D')
+						 k = 3;
+					 else
+					  if (readBuffer[25] == 'E)
+						 k = 4;
+					 else
+					  if (readBuffer[25] == 'F')
+						 k = 5;
+					 else
+					  if (readBuffer[25] == 'G')
+						 k = 6;
+					 else
+					  if (readBuffer[25] == 'H')
+						 k = 7;
+					 else
+					  if (readBuffer[25] == 'I')
+						 k = 8;
+					 else
+					  if (readBuffer[25] == 'J')
+						 k = 9;
+					 else
+					  if (readBuffer[25] == 'K')
+						 k = 10;
+					 else
+					  if (readBuffer[25] == 'L')
+						 k = 11;
+					 else
+					  if (readBuffer[25] == 'M')
+						 k = 12;
+					 else
+					  if (readBuffer[25] == 'N')
+						 k = 13;
+					 else
+					  if (readBuffer[25] == 'O')
+						 k = 14;
+					 else
+					  if (readBuffer[25] == 'P')
+						 k = 15;
+					 else
+					  if (readBuffer[25] == 'Q')
+						 k = 16;
+					 else
+					  if (readBuffer[25] == 'R')
+						 k = 17;
+					 else
+					  if (readBuffer[25] == 'S')
+						 k = 18;
+					 else
+					  if (readBuffer[25] == 'T')
+						 k = 19;
+					 else
+					  if (readBuffer[25] == 'U')
+						 k = 20;
+					 else
+					  if (readBuffer[25] == 'V')
+						 k = 21;
+					 else
+					  if (readBuffer[25] == 'W')
+						 k = 22;
+					 else
+					  if (readBuffer[25] == 'X')
+						 k = 23;
+					 else
+					  if (readBuffer[25] == 'Y')
+						 k = 24;
+					 else
+					  if (readBuffer[25] == 'Z')
+						 k = 25;
                      else
                         k = -1;
 
@@ -4073,7 +5631,7 @@ static void runit()
                               }
                            }
 
-                           for (i = 0; i < 4; i++)
+                           for (i = 0; i < 25; i++)
                            {
                               if ((readBuffer[12] == temp_x[i].old_sid[0]) &&
                                   (readBuffer[13] == temp_x[i].old_sid[1]) &&
@@ -4142,7 +5700,7 @@ static void *playback(void *arg)
    /* first packet is header */
 
    /*** MUST CHANGE rpt1 and rpt2 if temp_rcd->recvlen is 58 ***/
-   for (j = 0; j < 5; j++)
+   for (j = 0; j < 26; j++)
       sendto(ref_sock, (char *)temp_rcd->data[0], temp_rcd->recvlen, 0,
              (struct sockaddr *)&(temp_rcd->sin),
              sizeof(struct sockaddr_in));
@@ -4266,7 +5824,7 @@ int main(int argc, char **argv)
          break;
       }
   
-      for (i = 0; i < 5; i++)
+      for (i = 0; i < 26; i++)
       {
          temp_x[i].s_addr = 0;
          memset(temp_x[i].hdr, 0, 56);
